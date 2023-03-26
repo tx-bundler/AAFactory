@@ -85,11 +85,19 @@ contract Account is IAccount, IERC1271 {
     }
 
     function executeTransaction(
-        bytes32,
-        bytes32,
+        bytes32 _txHash,
+        bytes32 _suggestedSignedHash,
         Transaction calldata _transaction
     ) external payable override onlyBootloader {
         _executeTransaction(_transaction);
+    }
+
+    function multicall(
+        Transaction[] calldata _transactions
+    ) external payable {
+        for (uint256 i = 0; i < _transactions.length; i++) {
+            _executeTransaction(_transactions[i]);
+        }
     }
 
     function _executeTransaction(Transaction calldata _transaction) internal {
